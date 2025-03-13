@@ -2,7 +2,6 @@
 
 import { CustomerField } from '@/app/lib/definitions';
 import Link from 'next/link';
-import { createInvoice } from '@/app/lib/actions';
 import {
   CheckIcon,
   ClockIcon,
@@ -125,5 +124,5 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         <Button type="submit">Create Invoice</Button>
       </div>
     </form>
-  );
+  ;
 }

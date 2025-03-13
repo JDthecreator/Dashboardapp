@@ -1,5 +1,5 @@
 'use client';
-
+ 
 import { lusitana } from '@/app/ui/fonts';
 import {
   AtSymbolIcon,
@@ -7,11 +7,11 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from './button';
+import { Button } from '@/app/ui/button';
 import { useActionState } from 'react';
 import { authenticate } from '@/app/lib/actions';
 import { useSearchParams } from 'next/navigation';
-
+ 
 export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
@@ -19,8 +19,9 @@ export default function LoginForm() {
     authenticate,
     undefined,
   );
+ 
   return (
-    <form action={formAction} className="space-y-3">   
+    <form action={formAction} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -80,7 +81,7 @@ export default function LoginForm() {
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
               <p className="text-sm text-red-500">{errorMessage}</p>
             </>
-          )}         
+          )}
         </div>
       </div>
     </form>
