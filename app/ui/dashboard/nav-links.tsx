@@ -19,7 +19,7 @@ const links = [
     href: '/dashboard/invoices',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  { name: 'clients', href: '/dashboard/clients', icon: UserGroupIcon },
 ];
 
 export default function NavLinks() {

@@ -13,7 +13,7 @@ import CardWrapper from '@/app/ui/dashboard/cards';
 export default async function Page() {
   const {
     numberOfInvoices,
-    numberOfCustomers,
+    numberOfClients,
     totalPaidInvoices,
     totalPendingInvoices,
   } = await fetchCardData();
@@ -31,9 +31,9 @@ export default async function Page() {
         <Card title="Pending" value={totalPendingInvoices} type="pending" />
         <Card title="Total Invoices" value={JSON.stringify(numberOfInvoices)} type="invoices" />
         { <Card
-          title="Total Customers"
-          value={JSON.stringify(numberOfCustomers)}
-          type="customers"
+          title="Total Clients"
+          value={JSON.stringify(numberOfClients)}
+          type="clients"
         /> }
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">

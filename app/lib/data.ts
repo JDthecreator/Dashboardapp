@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 import {
-  CustomerField,
-  CustomersTableType,
+  ClientField,
+  ClientTableType,
   InvoiceForm,
   InvoicesTable,
   LatestInvoiceRaw,
@@ -33,9 +33,9 @@ export async function fetchRevenue() {
 export async function fetchLatestInvoices() {
   try {
     const data = await sql<LatestInvoiceRaw[]>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
+      SELECT invoices.amount, clients.name, clients.image_url, clients.email, invoices.id
       FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      JOIN clients ON invoices.client_id = clients.id
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
@@ -56,7 +56,7 @@ export async function fetchCardData() {
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
+    const clientCountPromise = sql`SELECT COUNT(*) FROM clients`;
     const invoiceStatusPromise = sql`SELECT
          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
@@ -64,17 +64,17 @@ export async function fetchCardData() {
 
     const data = await Promise.all([
       invoiceCountPromise,
-      customerCountPromise,
+      clientCountPromise,
       invoiceStatusPromise,
     ]);
 
     const numberOfInvoices = Number(data[0][0].count ?? '0');
-    const numberOfCustomers = Number(data[1][0].count ?? '0');
+    const numberOfClients = Number(data[1][0].count ?? '0');
     const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0');
     const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0');
 
     return {
-      numberOfCustomers,
+      numberOfClients,
       numberOfInvoices,
       totalPaidInvoices,
       totalPendingInvoices,
@@ -99,14 +99,14 @@ export async function fetchFilteredInvoices(
         invoices.amount,
         invoices.date,
         invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
+        clients.name,
+        clients.email,
+        clients.image_url
       FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      JOIN clients ON invoices.clients_id = clients.id
       WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
+        clients.name ILIKE ${`%${query}%`} OR
+        clients.email ILIKE ${`%${query}%`} OR
         invoices.amount::text ILIKE ${`%${query}%`} OR
         invoices.date::text ILIKE ${`%${query}%`} OR
         invoices.status ILIKE ${`%${query}%`}
@@ -125,10 +125,10 @@ export async function fetchInvoicesPages(query: string) {
   try {
     const data = await sql`SELECT COUNT(*)
     FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
+    JOIN clients ON invoices.clients_id = clients.id
     WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
+      clients.name ILIKE ${`%${query}%`} OR
+      clients.email ILIKE ${`%${query}%`} OR
       invoices.amount::text ILIKE ${`%${query}%`} OR
       invoices.date::text ILIKE ${`%${query}%`} OR
       invoices.status ILIKE ${`%${query}%`}
@@ -147,7 +147,7 @@ export async function fetchInvoiceById(id: string) {
     const data = await sql<InvoiceForm[]>`
       SELECT
         invoices.id,
-        invoices.customer_id,
+        invoices.client_id,
         invoices.amount,
         invoices.status
       FROM invoices
@@ -167,52 +167,52 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-export async function fetchCustomers() {
+export async function fetchClients() {
   try {
-    const customers = await sql<CustomerField[]>`
+    const clients = await sql<ClientField[]>`
       SELECT
         id,
         name
-      FROM customers
+      FROM clients
       ORDER BY name ASC
     `;
 
-    return customers;
+    return clients;
   } catch (err) {
     console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    throw new Error('Failed to fetch all clients.');
   }
 }
 
-export async function fetchFilteredCustomers(query: string) {
+export async function fetchFilteredClients(query: string) {
   try {
-    const data = await sql<CustomersTableType[]>`
+    const data = await sql<ClientTableType[]>`
 		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
+		  clients.id,
+		  clients.name,
+		  clients.email,
+		  clients.image_url,
 		  COUNT(invoices.id) AS total_invoices,
 		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
 		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
+		FROM clients
+		LEFT JOIN invoices ON clients.id = invoices.client_id
 		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
+		  clients.name ILIKE ${`%${query}%`} OR
+        clients.email ILIKE ${`%${query}%`}
+		GROUP BY clients.id, clients.name, clients.email, clients.image_url
+		ORDER BY clients.name ASC
 	  `;
 
-    const customers = data.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
+    const clients = data.map((client) => ({
+      ...client,
+      total_pending: formatCurrency(client.total_pending),
+      total_paid: formatCurrency(client.total_paid),
     }));
 
-    return customers;
+    return clients;
   } catch (err) {
     console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
+    throw new Error('Failed to fetch client table.');
   }
 }

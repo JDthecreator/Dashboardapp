@@ -5,9 +5,9 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: { rejectUnauthorized: fal
 async function listInvoices() {
 	try {
 		const data = await sql`
-      SELECT invoices.amount, customers.name
+      SELECT invoices.amount, clients.name
       FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+      JOIN clients ON invoices.clients_id = clients.id
       WHERE invoices.amount = 666;
     `;
 		return data;
