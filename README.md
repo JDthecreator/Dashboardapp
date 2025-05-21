@@ -38,5 +38,10 @@ Used Supabase table editor to create and modify existing tables to more clearly 
 Day 7 
 
 Ui back up pushed commit, working on creating submenu in sidnav to move invoice ui
+submenu for invoice search completed. Dashboard for invoices moved to invoice page
+created invoice search page and submenu option.
 
+Day 8
+
+Design and update Home dashboard.
 
