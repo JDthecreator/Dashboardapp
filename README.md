@@ -27,6 +27,7 @@ Day 4
 
 Decided to repurpose the app as a Saas tool for Coaching. 
 
+
 Started laying out the the new table schemas for the data that will be held in the database.
 
 

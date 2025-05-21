@@ -103,7 +103,7 @@ export async function fetchFilteredInvoices(
         clients.email,
         clients.image_url
       FROM invoices
-      JOIN clients ON invoices.clients_id = clients.id
+      JOIN clients ON invoices.client_id = clients.id
       WHERE
         clients.name ILIKE ${`%${query}%`} OR
         clients.email ILIKE ${`%${query}%`} OR
@@ -124,8 +124,8 @@ export async function fetchFilteredInvoices(
 export async function fetchInvoicesPages(query: string) {
   try {
     const data = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN clients ON invoices.clients_id = clients.id
+    FROM invoices 
+    JOIN clients ON invoices.client_id = clients.id
     WHERE
       clients.name ILIKE ${`%${query}%`} OR
       clients.email ILIKE ${`%${query}%`} OR
