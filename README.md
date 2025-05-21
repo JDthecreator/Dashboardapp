@@ -34,3 +34,9 @@ Started laying out the the new table schemas for the data that will be held in t
 Day 6
 
 Used Supabase table editor to create and modify existing tables to more clearly reflect the use case. 
+
+Day 7 
+
+Ui back up pushed commit, working on creating submenu in sidnav to move invoice ui
+
+
